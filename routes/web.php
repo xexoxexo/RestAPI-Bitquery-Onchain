@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\BitqueryController;
-use App\Http\Controllers\Web3AuthController;
-use App\Http\Middleware\RequireWallet;
+use App\Http\Controllers\DynamicAuthController;
+use App\Http\Middleware\RequireLogin;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/trades');
@@ -17,14 +17,13 @@ Route::get('/wallet', [BitqueryController::class, 'wallet'])
     ->middleware('throttle:20,1,wallet')
     ->name('wallet');
 
-// Live Feed: hanya untuk pengunjung yang sudah masuk dengan wallet.
+// Live Feed: hanya untuk pengunjung yang sudah masuk.
 Route::get('/trades/feed', [BitqueryController::class, 'feed'])
-    ->middleware(['throttle:30,1,feed', RequireWallet::class])
+    ->middleware(['throttle:30,1,feed', RequireLogin::class])
     ->name('trades.feed');
 
-// Masuk dengan wallet (tanda tangan pesan, gratis dan tanpa transaksi).
+// Masuk dengan Dynamic.
 Route::prefix('auth')->middleware('throttle:10,1,auth')->group(function () {
-    Route::post('/nonce', [Web3AuthController::class, 'nonce'])->name('auth.nonce');
-    Route::post('/verify', [Web3AuthController::class, 'verify'])->name('auth.verify');
-    Route::post('/logout', [Web3AuthController::class, 'logout'])->name('auth.logout');
+    Route::post('/dynamic', [DynamicAuthController::class, 'login'])->name('auth.dynamic');
+    Route::post('/logout', [DynamicAuthController::class, 'logout'])->name('auth.logout');
 });

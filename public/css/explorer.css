@@ -96,3 +96,18 @@ a.mono:hover { color: #fff; text-decoration: underline; }
 .toast-box { position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%); z-index: 2000; max-width: min(32rem, 92vw); padding: .7rem 1rem; border: 1px solid #3a3d44; border-radius: .6rem; background: #23252a; color: var(--text); font-size: .9rem; }
 .toast-box.error { border-color: #6e2a31; background: #2a1417; }
 .toast-box[hidden] { display: none; }
+
+/* Kotak masuk (Dynamic) */
+.login { width: min(26rem, 92vw); margin: 10vh auto auto; padding: 0; border: 1px solid #2f3238; border-radius: .9rem; background: #141518; color: var(--text); box-shadow: 0 20px 60px rgba(0, 0, 0, .6); }
+.login::backdrop { background: rgba(0, 0, 0, .6); }
+.login-box { display: grid; gap: .75rem; padding: 1.25rem; }
+.login-list { display: grid; gap: .4rem; }
+.wallet-btn { display: flex; align-items: center; gap: .6rem; width: 100%; padding: .6rem .8rem; border: 1px solid #2a2c31; border-radius: .6rem; background: var(--panel); color: var(--text); text-align: left; }
+.wallet-btn:hover:not(:disabled) { border-color: #4a4e56; background: #1d1f23; }
+.wallet-btn:disabled { opacity: .6; }
+.login-or { display: flex; align-items: center; gap: .6rem; color: var(--muted); font-size: .85rem; }
+.login-or::before, .login-or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.login-email { display: grid; gap: .5rem; }
+.login-msg { min-height: 1.2rem; margin: 0; color: var(--muted); font-size: .85rem; }
+.login-msg.error { color: var(--bad); }
+.login .link-btn { justify-self: start; }
