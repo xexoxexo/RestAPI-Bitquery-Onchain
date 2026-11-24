@@ -20,7 +20,7 @@
             <li>Satu baris adalah satu penukaran. <strong>Dibeli</strong> adalah token yang diterima pembeli, <strong>Dijual</strong> adalah token yang diberikan.</li>
             <li><strong>Nilai (USD)</strong> adalah perkiraan nilai penukaran dalam dolar AS.</li>
             <li><strong>Kode transaksi</strong> adalah nomor unik tiap transaksi. Klik untuk melihat detailnya di penjelajah blockchain.</li>
-            <li><strong>Live Feed</strong> memperbarui tabel otomatis dan butuh wallet yang terhubung. Klik Hubungkan wallet, lalu tanda tangani pesan masuk. Tanda tangan itu gratis dan tidak mengirim uang.</li>
+            <li><strong>Live Feed</strong> memperbarui tabel otomatis dan butuh akun yang sudah masuk. Klik Masuk, lalu pilih wallet atau pakai email. Masuk gratis dan tidak mengirim uang.</li>
         </ul>
     </details>
 @endsection

@@ -103,45 +103,17 @@
         });
     };
 
-    /* ---------- Masuk dengan wallet (Web3) ---------- */
-    function connectWallet() {
-        var eth = window.ethereum;
-        if (!eth) {
-            toast('Wallet tidak ditemukan. Pasang MetaMask atau buka halaman ini di browser wallet.', true);
-            return Promise.reject();
+    /* ---------- Masuk (Dynamic) ---------- */
+    function openLogin(redirectTo) {
+        if (!body.dataset.dynamicEnv) {
+            toast('Login belum dikonfigurasi. Isi DYNAMIC_ENVIRONMENT_ID di file .env.', true);
+            return;
         }
-        var account;
-        return eth.request({ method: 'eth_requestAccounts' })
-            .then(function (accounts) {
-                account = accounts[0];
-                return eth.request({ method: 'eth_chainId' });
-            })
-            .then(function (chainHex) {
-                return post(body.dataset.urlNonce, { address: account, chainId: parseInt(chainHex, 16) });
-            })
-            .then(function (res) {
-                return eth.request({ method: 'personal_sign', params: [res.message, account] });
-            })
-            .then(function (signature) {
-                return post(body.dataset.urlVerify, { address: account, signature: signature });
-            });
-    }
-
-    function connectThen(goTo) {
-        connectWallet()
-            .then(function () { if (goTo) { location.href = goTo; } else { location.reload(); } })
-            .catch(function (err) {
-                if (!err) { return; }
-                toast(err.code === 4001 ? 'Permintaan dibatalkan di wallet.' : (err.message || 'Gagal menghubungkan wallet.'), true);
-            });
-    }
-
-    if (window.ethereum && window.ethereum.on && body.dataset.wallet) {
-        window.ethereum.on('accountsChanged', function (accounts) {
-            if (!accounts.length || accounts[0].toLowerCase() !== body.dataset.wallet.toLowerCase()) {
-                post(body.dataset.urlLogout).then(function () { location.reload(); });
-            }
-        });
+        if (!window.BitqueryAuth) {
+            toast('Login belum siap. Jalankan build modul Dynamic (lihat README), lalu muat ulang halaman.', true);
+            return;
+        }
+        window.BitqueryAuth.open(redirectTo);
     }
 
     /* ---------- Live Feed ---------- */
@@ -192,9 +164,8 @@
 
     function onLiveToggle() {
         var tradesLive = body.dataset.urlTrades + '?live=1';
-        if (!body.dataset.wallet) {
-            toast('Live Feed butuh wallet. Tanda tangan di wallet itu gratis.', false);
-            connectThen(tradesLive);
+        if (!body.dataset.user) {
+            openLogin(tradesLive);
             return;
         }
         if (!bar) { location.href = tradesLive; return; }
@@ -202,7 +173,7 @@
     }
 
     if (bar && /[?&]live=1/.test(location.search)) {
-        if (body.dataset.wallet) { startLive(); } else { toast('Hubungkan wallet untuk memakai Live Feed.', false); }
+        if (body.dataset.user) { startLive(); } else { toast('Masuk dulu untuk memakai Live Feed.', false); }
     }
 
     /* ---------- Pencarian cepat (Ctrl+K) ---------- */
@@ -314,9 +285,10 @@
         }
         if ((el = t.closest('[data-fill]'))) { $(el.dataset.fill).value = el.dataset.value; }
         if (t.closest('[data-open-palette]')) { openPalette(); }
-        if (t.closest('[data-connect]')) { connectThen(null); }
+        if (t.closest('[data-connect]')) { openLogin(null); }
         if (t.closest('[data-logout]')) {
-            post(body.dataset.urlLogout)
+            var out = window.BitqueryAuth ? window.BitqueryAuth.signOut() : Promise.resolve();
+            out.then(function () { return post(body.dataset.urlLogout); })
                 .then(function () { location.href = body.dataset.urlTrades; })
                 .catch(function (err) { toast(err.message, true); });
         }
